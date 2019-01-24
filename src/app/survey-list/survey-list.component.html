@@ -1,0 +1,8 @@
+<h1>Lista ankiet:</h1>
+<mat-list>
+  <mat-list-item *ngFor="let p of playableSystems">
+    <strong>{{p[0].name}}</strong>(pytań: {{p[0].questionCounter}})
+    <span class="example-spacer"></span>
+    <button mat-stroked-button [routerLink]="['/survey', p[1]]"> Wypełnij ankietę <mat-icon>play_arrow</mat-icon></button>
+  </mat-list-item>
+</mat-list>

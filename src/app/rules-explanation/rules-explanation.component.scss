@@ -1,0 +1,39 @@
+table {
+    border-collapse: collapse;
+}
+
+table.border th, table.border td {
+    border: 1px solid black;
+    text-align: center;
+}
+
+td {
+    padding: 0 10px;
+}
+
+table.transparent td {
+    padding: 0 30px 0 0;
+    vertical-align: top;
+}
+
+th {
+    padding: 0 10px;
+}
+
+li {
+    list-style-type: none;
+}
+
+ul {
+    padding: 0;
+}
+
+h3 {
+    margin: 10px 0 0 0;
+}
+
+.withTable {
+    display: inline-block;
+    margin-top: 10px;
+    font-weight: bold;
+}

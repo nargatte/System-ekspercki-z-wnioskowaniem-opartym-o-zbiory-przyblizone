@@ -1,0 +1,99 @@
+<button mat-stroked-button [routerLink]="['/system-list', id]"><mat-icon>arrow_back</mat-icon> Powróć do listy systemów decyzyjnych</button>
+<button mat-stroked-button *ngIf="isNew" (click)="addSystem()"><mat-icon>add</mat-icon> Dodaj system decyzyjny</button>
+<button mat-stroked-button *ngIf="!isNew" (click)="editSystem()"><mat-icon>save_alt</mat-icon> Zapisz system decyzyjny</button>
+<mat-card>
+  <mat-card-title>Edytor systemów decyzyjnych</mat-card-title>
+  <mat-form-field class="nameField">
+    <input matInput placeholder="Nazwa systemu decyzyjnego" [(ngModel)]="system.name" [formControl]="nameForm">
+    <mat-error>
+      Pole nie może być puste
+    </mat-error>
+  </mat-form-field>
+  <mat-form-field class="attributeField">
+    <mat-select  placeholder="Atrybut decyzyjny" [(ngModel)]="decisionAttribute" [disabled]="dataSource.data.length != 0" (selectionChange)="attributeChecked[$event.value] = false; displayedColumnsUpdate();">
+      <mat-option *ngFor="let attribute of provider.attributes; let i = index" [value]="''+i">
+        {{attribute.name}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-list>
+      <h3 mat-subheader>Lista atrybutów warunkowych:</h3>
+      <mat-list-item *ngFor="let attribute of provider.attributes; let i = index">
+        <mat-checkbox
+        [class.isRed]="checkBoxesError"
+        [disabled]="i == decisionAttribute || dataSource.data.length != 0"
+        [(ngModel)]="attributeChecked[i]"
+        (change)="onChangeCheckBox()"
+        [indeterminate]="i == decisionAttribute">
+          <strong class="attributeName">{{attribute.name}}</strong>: 
+          <span *ngFor="let value of attribute.values; let last = last">
+            {{value}}<span *ngIf="!last">,</span>
+          </span>
+        </mat-checkbox>
+      </mat-list-item>
+      <mat-list-item *ngIf="checkBoxesError">
+        <span class="isRed">Należy wybrać co najmniej jeden atrybut warunkowy</span>
+      </mat-list-item>
+    </mat-list>
+</mat-card>
+<mat-card *ngIf="displayedColumns.length >= 3">
+  <mat-card-title class="inline">Edytor obiektów</mat-card-title>
+  <button mat-stroked-button (click)="onDeleteFacts(); table.renderRows();" [disabled]="selection.selected.length == 0" class="floatButton"><mat-icon>delete</mat-icon> Usuń zaznaczone obieky</button>
+  <button mat-stroked-button (click)="onAddFact(); table.renderRows();" class="floatButton"><mat-icon>add</mat-icon> Dodaj obiekt</button>
+  <div class="tableContainer mat-elevation-z1" [hidden]="dataSource.data.length == 0">
+    <table mat-table #table [dataSource]="dataSource">
+
+        <ng-container matColumnDef="select" sticky>
+          <th mat-header-cell *matHeaderCellDef>
+            <mat-checkbox (change)="$event ? masterToggle() : null"
+                          [checked]="selection.hasValue() && isAllSelected()"
+                          [indeterminate]="selection.hasValue() && !isAllSelected()">
+            </mat-checkbox>
+          </th>
+          <td mat-cell *matCellDef="let row; let i = index">
+            <mat-checkbox (click)="$event.stopPropagation()"
+                          (change)="$event ? selection.toggle(row) : null"
+                          [checked]="selection.isSelected(row)">
+                          <strong>{{i}}</strong>
+            </mat-checkbox>
+          </td>
+        </ng-container>
+
+        <ng-container *ngFor="let attribute of provider.attributes; let ai = index" [matColumnDef]="''+ai" [stickyEnd]="decisionAttribute == ai">
+          <th mat-header-cell *matHeaderCellDef> {{attribute.name}} </th>
+          <td mat-cell *matCellDef="let element">
+            <mat-form-field class="valueField">
+                <mat-select [(ngModel)]="element[ai]" (selectionChange)="updateFactsInSystemModel()">
+                  <mat-option *ngFor="let value of attribute.values; let i = index" [value]="i">
+                    {{value}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns; let i = index" [class.light]="lightFacts.indexOf(i) != -1"></tr>
+
+      </table>
+  </div>
+</mat-card>
+<mat-card *ngIf="dataSource.data.length != 0">
+  <mat-card-title>Reguły</mat-card-title>
+  <app-rules-table #rulesTable
+  [ruleList]="factProcessor.reducedRules"
+  [system]="system"
+  [canSelected]="true"
+  (selected)="lightFacts = $event == null ? [] : factProcessor.reducedRules[$event].facts"
+  ></app-rules-table>
+</mat-card>
+<mat-card *ngIf="dataSource.data.length != 0">
+  <mat-card-title>Kroki generowania reguł
+      <button mat-stroked-button (click)="explanation.hide()" class="floatButton"><mat-icon>expand_more</mat-icon> Schowaj wszystko</button>
+    <button mat-stroked-button (click)="explanation.expand()" class="floatButton"><mat-icon>expand_less</mat-icon> Pokaż wszystko</button>
+  </mat-card-title>
+  <app-rules-explanation #explanation
+  [factProcessor]="factProcessor"
+  [system]="system"
+  ></app-rules-explanation>
+</mat-card>

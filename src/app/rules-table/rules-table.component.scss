@@ -1,0 +1,27 @@
+table {
+    width: 100%;
+}
+
+tr.canSelected:hover {
+    background-color: bisque;
+}
+
+tr.isSelected {
+    background-color: burlywood;
+}
+
+tr.isSelected:hover {
+    background-color: burlywood;
+}
+
+* {
+    text-align: center !important;
+}
+
+.light {
+    background-color: bisque;
+}
+
+.superLight {
+    background-color: burlywood !important;
+}

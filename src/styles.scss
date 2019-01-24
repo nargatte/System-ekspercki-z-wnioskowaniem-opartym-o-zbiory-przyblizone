@@ -1,0 +1,20 @@
+/* You can add global styles to this file, and also import other style files */
+@import "~@angular/material/prebuilt-themes/indigo-pink.css";
+
+* {
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+h1 {
+    margin-left: 20px;
+    display: inline-block;
+    margin: 10px;
+}
+
+.isRed {
+    color: #f44336;
+}
+
+.mat-card-title {
+    margin-bottom: 15px !important;
+}

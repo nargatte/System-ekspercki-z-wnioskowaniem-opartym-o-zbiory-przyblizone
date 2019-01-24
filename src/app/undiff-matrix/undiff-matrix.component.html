@@ -1,0 +1,10 @@
+<table>
+  <tr>
+    <td></td>
+    <td *ngFor="let q of matrix; let i = index"><strong>X<sub>{{i}}</sub></strong></td>
+  </tr>
+  <tr *ngFor="let r of matrix; let ri = index">
+    <td><strong>X<sub>{{ri}}</sub></strong></td>
+    <td *ngFor="let c of r"><app-attr-set [attributes]="c"></app-attr-set></td>
+  </tr>
+</table>

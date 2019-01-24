@@ -1,0 +1,36 @@
+<button mat-stroked-button [routerLink]="['/attribute-list', id]"><mat-icon>arrow_back</mat-icon> Powróć do listy atrybutów</button>
+<button mat-stroked-button *ngIf="isNew" (click)="addAtribute()"><mat-icon>add</mat-icon> Dodaj atrybut</button>
+<button mat-stroked-button *ngIf="!isNew" (click)="editAtribute()"><mat-icon>save_alt</mat-icon> Zapisz atrybut</button>
+<mat-card [formGroup]="myGroup">
+  <mat-card-title>Edytor atrybutów</mat-card-title>
+  <mat-form-field class="nameField">
+    <input matInput placeholder="Nazwa atrybutu" formControlName="name">
+    <mat-error>
+      Pole nie może być puste
+    </mat-error>
+  </mat-form-field>
+  <mat-form-field class="questionField">
+    <input matInput placeholder="Pytanie" formControlName="question">
+    <mat-error>
+      Pole nie może być puste
+    </mat-error>
+  </mat-form-field>
+  <mat-list formArrayName="values">
+    <h3 mat-subheader>Lista wartości jakie może przyjąć atrybut:</h3>
+    <mat-list-item *ngFor="let value of values.controls; let i = index">
+      {{i+1}}: 
+      <mat-form-field class="valueField">
+        <input matInput [formControlName]="i">
+        <button *ngIf="!hasSystems &&  values.controls.length != 1" mat-button matSuffix mat-icon-button matTooltip="Usuń wartość atrybutu" (click)="onDeleteValue(i)">
+          <mat-icon>delete</mat-icon>
+        </button>
+        <mat-error>
+          Pole nie może być puste
+        </mat-error>
+      </mat-form-field>
+    </mat-list-item>
+    <mat-list-item *ngIf="!hasSystems">
+      <button mat-stroked-button class="addNewValue" (click)="onAddValue()"><mat-icon>add</mat-icon> Dodaj nową wartość atrybutu</button>
+    </mat-list-item>
+  </mat-list>
+</mat-card>

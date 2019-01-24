@@ -1,0 +1,9 @@
+<mat-toolbar>
+  <span id="title">System ekspercki z wnioskowaniem opartym o zbiory przybliżone</span>
+  <button mat-button [matMenuTriggerFor]="expert">Panel eksperta</button>
+  <mat-menu #expert>
+    <button mat-menu-item routerLink="/attribute-list/0">Atrybuty</button>
+    <button mat-menu-item routerLink="/system-list/0">Systemy decyzyjne</button>
+  </mat-menu>
+  <button mat-button routerLink="/survey-list">Panel użytkownika</button>
+</mat-toolbar>

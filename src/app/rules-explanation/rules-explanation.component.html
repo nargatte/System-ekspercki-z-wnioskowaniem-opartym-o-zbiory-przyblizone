@@ -1,0 +1,120 @@
+<mat-accordion multi="true" #contener>
+  <app-accordion-item title="Atrybuty">
+    <strong>A = {{'{'}} <span *ngFor="let a of range(system.conditionAttributes.length)">
+      {{alph[a]}}, </span>y {{'}'}}</strong>
+    <table class="transparent">
+      <tr>
+        <td *ngFor="let attribute of system.conditionAttributes; let ai = index">
+          <ul>
+            <li><strong>{{attribute.name}} &rarr; {{alph[ai]}}</strong></li>
+            <li *ngFor="let value of attribute.values; let vi = index">
+                {{attribute.values[vi]}} &rarr; {{alph[ai]}}<sub>{{vi}}</sub>
+            </li>
+          </ul>
+        </td>
+        <td>
+          <ul>
+            <li><strong>{{system.decisionAttribute.name}} &rarr; y</strong></li>
+            <li *ngFor="let value of system.decisionAttribute.values; let vi = index">
+                {{value}} &rarr; y<sub>{{vi}}</sub>
+            </li>
+          </ul>
+        </td>
+      </tr>
+    </table>
+  </app-accordion-item>
+  <app-accordion-item title="Obiekty">
+    <table class="border">
+      <tr><th></th><th *ngFor="let attribute of system.conditionAttributes; let ai = index">{{alph[ai]}}</th><th>y</th></tr>
+      <tr *ngFor="let fact of system.facts; let ri = index">
+        <td><strong>x<sub>{{ri}}</sub></strong></td>
+        <td *ngFor="let condition of fact.conditions; let ci = index">{{alph[ci]}}<sub>{{condition}}</sub></td>
+        <td>y<sub>{{fact.decision}}</sub></td>
+      </tr>
+    </table>
+  </app-accordion-item>
+  <app-accordion-item title="Klasy nierozróżnialności i klasy decyzyjne">
+    <table class="transparent">
+      <tr>
+        <td>
+          <strong>Klasy nierozróżnialności:</strong>
+          <ul>
+            <li *ngFor="let c of factProcessor.undiffClasses; let ci = index">X<sub>{{ci}}</sub> = <app-array-set [array]="c" char="x"></app-array-set></li>
+          </ul>
+        </td>
+        <td>
+          <strong>Klasy decyzyjne:</strong>
+          <ul>
+            <li *ngFor="let c of factProcessor.decisionClasses; let ci = index">Y<sub>{{ci}}</sub> = <app-array-set [array]="c" char="x"></app-array-set></li>
+          </ul>
+        </td>
+      </tr>
+    </table>
+  </app-accordion-item>
+  <app-accordion-item title="Zbiory przybliżone odpowiadające klasom decyzyjnym">
+    <table class="border">
+      <tr>
+        <th>Klasa decyzyjna</th><th>Dolna aproksymacja</th><th>Górna aproksymacja</th><th>Rodzaj zbioru</th>
+      </tr>
+      <tr *ngFor="let c of factProcessor.decisionClasses; let ci = index">
+        <td>Y<sub>{{ci}}</sub></td>
+        <td><app-array-set [array]="factProcessor.downApprox[ci]" char="x"></app-array-set></td>
+        <td><app-array-set [array]="factProcessor.upApprox[ci]" char="x"></app-array-set></td>
+        <td *ngIf="factProcessor.downApprox[ci].length == factProcessor.upApprox[ci].length">Dokładny</td>
+        <td *ngIf="factProcessor.downApprox[ci].length != factProcessor.upApprox[ci].length">Przybliżony</td>
+      </tr>
+    </table>
+  </app-accordion-item>
+  <app-accordion-item title="Klasy &#8706;-decyzyjne">
+    <table class="transparent">
+      <tr *ngFor="let c of factProcessor.dClasses; let ci = index">
+        <td>
+          Z<sub>{{ci}}</sub> = <app-array-set [array]="c" char="x"></app-array-set>
+        </td>
+        <td>
+          <span *ngFor="let v of factProcessor.dRelation[ci]">&#8706;(X<sub>{{v}}</sub>) = </span><app-array-set [array]="factProcessor.dDecision[ci]" char="y"></app-array-set>
+        </td>
+      </tr>
+    </table>
+  </app-accordion-item>
+  <app-accordion-item title="Tablica &#8706;-decyzyjna">
+    <table class="border">
+      <tr>
+        <th></th><th *ngFor="let q of system.conditionAttributes; let i = index">{{alph[i]}}</th><th>&#8706;</th><th>Z</th>
+      </tr>
+      <tr *ngFor="let c of factProcessor.undiffClasses; let ic = index">
+        <td>X<sub>{{ic}}</sub></td>
+        <td *ngFor="let v of system.facts[c[0]].conditions; let iv = index">{{alph[iv]}}<sub>{{v}}</sub></td>
+        <td><app-array-set [array]="factProcessor.dDecision[ic]" char="y"></app-array-set></td>
+        <td>Z<sub>{{factProcessor.dClassesForUndiffClasses[ic]}}</sub></td>
+      </tr>
+    </table>
+  </app-accordion-item>
+  <app-accordion-item title="Macierz rozróżnialności i rdzeń">
+    <app-undiff-matrix [matrix]="factProcessor.matrix1"></app-undiff-matrix>
+    <span class="withTable">Core(A) = <app-attr-set [attributes]="factProcessor.core"></app-attr-set></span>
+  </app-accordion-item>
+  <app-accordion-item title="Uogulniona macierz rozróżnialności i redukty">
+    <app-undiff-matrix [matrix]="factProcessor.matrix2"></app-undiff-matrix>
+    <span class="withTable">Reduct(A) = <span *ngFor="let r of factProcessor.reducts; let l = last">
+      <app-attr-set [attributes]="r"></app-attr-set>
+      <span *ngIf="!l"> &or; </span>
+    </span></span>
+  </app-accordion-item>
+  <app-accordion-item title="Zredukowana uogulniona macierz rozróżnialności">
+    <app-undiff-matrix [matrix]="factProcessor.matrix3"></app-undiff-matrix>
+  </app-accordion-item>
+  <app-accordion-item title="Reguły" [isTable]="true">
+    <span class="withTable">Przed usunięciem duplikatów (reguł: {{factProcessor.rules.length}}):</span>
+    <app-rules-table
+    [ruleList]="factProcessor.rules"
+    [showClass]="true"
+    [showFacts]="true"
+    ></app-rules-table>
+    <span class="withTable">Po usunięciu duplikatów (reguł: {{factProcessor.reducedRules.length}}):</span>
+    <app-rules-table
+    [ruleList]="factProcessor.reducedRules"
+    [showFacts]="true"
+    ></app-rules-table>
+  </app-accordion-item>
+</mat-accordion>

@@ -1,0 +1,22 @@
+<h1>Lista systemów decyzyjnych:</h1>
+<button mat-stroked-button routerLink="/system/new"><mat-icon>add</mat-icon> Dodaj sysytem decyzyjny</button>
+<mat-accordion>
+  <mat-expansion-panel [expanded]="expandId == i" *ngFor="let system of provider.systems; let i = index">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        {{system.name}}
+      </mat-panel-title>
+      <mat-panel-description>
+        Atrybut decyzyjny: <strong>{{system.decisionAttribute.name}}</strong>
+        Liczba obiektów: <strong>{{system.facts.length}}</strong>
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+    <mat-list>
+      <h3 mat-subheader>Lista atrubutów warunkowych:</h3>
+      <mat-list-item *ngFor="let attributes of system.conditionAttributes">{{attributes.name}}</mat-list-item>
+    </mat-list>
+    <mat-divider></mat-divider>
+    <button mat-icon-button matTooltip="Usuń system decyzyjny" (click)="provider.deleteSystem(system); expandId = i;"><mat-icon>delete</mat-icon></button>
+    <button mat-icon-button matTooltip="Edytuj obiekty systemu decyzyjnego" [routerLink]="['/system', provider.getSystemId(system)]"><mat-icon>edit</mat-icon></button>
+  </mat-expansion-panel>
+</mat-accordion>

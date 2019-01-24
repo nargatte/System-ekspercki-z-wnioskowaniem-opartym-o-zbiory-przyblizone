@@ -1,0 +1,64 @@
+<table mat-table [dataSource]="ruleList" class="mat-elevation-z1">
+
+  <ng-container matColumnDef="conditions">
+    <th mat-header-cell *matHeaderCellDef> Przesłanki </th>
+    <td mat-cell *matCellDef="let element">
+      <span *ngFor="let condition of element.conditions; let last = last">
+        <span *ngIf="system == null">{{alph[condition[0]]}}<sub>{{condition[1]}}</sub></span>
+        <span *ngIf="system != null">{{system.conditionAttributes[condition[0]].name}} = {{system.conditionAttributes[condition[0]].values[condition[1]]}}</span>
+        <span *ngIf="!last"> &and; </span>
+      </span>
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="implication">
+    <th mat-header-cell *matHeaderCellDef></th>
+    <td mat-cell *matCellDef="let element"> &#x27F9; </td>
+  </ng-container>
+
+  <ng-container matColumnDef="decision">
+    <th mat-header-cell *matHeaderCellDef> Konkluzja </th>
+    <td mat-cell *matCellDef="let element">
+      <span *ngIf="system == null"> y<sub>{{element.decision}}</sub> </span>
+      <span *ngIf="system != null"> {{system.decisionAttribute.values[element.decision]}} </span>
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="support">
+    <th mat-header-cell *matHeaderCellDef> Wsparcie </th>
+    <td mat-cell *matCellDef="let element"> {{element.support}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="accuracy">
+    <th mat-header-cell *matHeaderCellDef> Wiarygodność </th>
+    <td mat-cell *matCellDef="let element"> {{element.accuracy | number}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="coverage">
+    <th mat-header-cell *matHeaderCellDef> Trafność </th>
+    <td mat-cell *matCellDef="let element"> {{element.coverage | number}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="length">
+    <th mat-header-cell *matHeaderCellDef> Długość </th>
+    <td mat-cell *matCellDef="let element"> {{element.length}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="class">
+    <th mat-header-cell *matHeaderCellDef> Klasa nieroz. </th>
+    <td mat-cell *matCellDef="let element"> X<sub>{{element.class}}</sub> </td>
+  </ng-container>
+
+  <ng-container matColumnDef="facts">
+    <th mat-header-cell *matHeaderCellDef> Obiekty </th>
+    <td mat-cell *matCellDef="let element"> <app-array-set [array]="element.facts" char="x"></app-array-set> </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns; let i = index"
+  [class.isSelected]="selectedRow == i"
+  [class.canSelected]="canSelected"
+  (click)="onClick(i)"
+  [class.light]="lightRules.indexOf(ruleList[i]) != -1"
+  [class.superLight]="bestLightRule == ruleList[i]"></tr>
+</table>

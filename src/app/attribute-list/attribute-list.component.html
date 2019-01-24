@@ -1,0 +1,27 @@
+<h1>Lista atrybutów:</h1>
+<button mat-stroked-button routerLink="/attribute/new"><mat-icon>add</mat-icon> Dodaj nowy atrybut</button>
+<mat-accordion>
+  <mat-expansion-panel [expanded]="expandId == i" *ngFor="let attribute of provider.attributes; let i = index">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        {{attribute.name}}
+      </mat-panel-title>
+      <mat-panel-description>
+        {{attribute.question}}
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+    <div class="lists-container">
+      <mat-list>
+        <h3 mat-subheader>Lista wartości jakie może przyjąć atrybut:</h3>
+        <mat-list-item *ngFor="let value of attribute.values">{{value}}</mat-list-item>
+      </mat-list>
+      <mat-list>
+        <h3 mat-subheader>Lista systemów decyzyjnych wykorzystujących atrybut:</h3>
+        <mat-list-item *ngFor="let system of attribute.systems">{{system.name}}</mat-list-item>
+      </mat-list>
+    </div>
+    <mat-divider></mat-divider>
+    <button mat-icon-button [disabled]="attribute.systems.length != 0" matTooltip="Usuń atrybut" (click)="provider.deleteAttribute(attribute); expandId = i;"><mat-icon>delete</mat-icon></button>
+    <button mat-icon-button matTooltip="Edytuj atrybut" [routerLink]="['/attribute', provider.getAttributeId(attribute)]"><mat-icon>edit</mat-icon></button>
+  </mat-expansion-panel>
+</mat-accordion>

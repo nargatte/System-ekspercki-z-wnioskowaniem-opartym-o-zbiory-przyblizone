@@ -1,0 +1,26 @@
+<h1>Ankieta dla systemu "{{system.name}}"</h1>
+<mat-list>
+  <ng-template ngFor let-attNr [ngForOf]="reduct">
+      <mat-list-item class="question">{{system.conditionAttributes[attNr].question}}</mat-list-item>
+      <mat-list-item>
+        <mat-button-toggle-group [(ngModel)]="answers[attNr]" (change)="onChange()">
+          <mat-button-toggle [value]="-1">Brak wyboru</mat-button-toggle>
+          <mat-button-toggle *ngFor="let value of system.conditionAttributes[attNr].values; let i = index" [value]="i">{{value}}</mat-button-toggle>
+        </mat-button-toggle-group>
+      </mat-list-item>
+      <mat-divider></mat-divider>
+  </ng-template>
+</mat-list>
+<span *ngIf="fitRules.length != 0" class="decision">Decyzja system: {{system.decisionAttribute.values[fitRules[bestRuleIndex].decision]}}</span>
+<span *ngIf="fitRules.length == 0" class="decision">System nie może podjąć decyzji na podstawie udzielonych odpowiedzi.</span>
+<mat-card>
+    <mat-card-title>Uzasadnienie</mat-card-title>
+    <mat-card-content>
+      <app-rules-table
+        [ruleList]="processor.reducedRules"
+        [system]="system"
+        [lightRules]="fitRules"
+        [bestLightRule]="fitRules[bestRuleIndex]"
+      ></app-rules-table>
+    </mat-card-content>
+</mat-card>
